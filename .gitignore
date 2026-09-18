@@ -1,0 +1,6 @@
+# Local IDE state and generated AVR build outputs
+**/.vs/
+**/Debug/
+**/Release/
+*.atsuo
+*.user
