@@ -144,24 +144,24 @@ LED는 약 500 ms 간격으로 상태가 바뀌므로 켜짐과 꺼짐을 한 �
 
 ## 참고 자료
 
-강의 PDF는 `docs/lectures` 아래에 이론과 실습으로 나누어 보관합니다. 원본 파일명과 내용은 유지했습니다.
+강의 PDF는 `docs/lectures` 폴더에 모든 자료를 통합하여 보관합니다. 원본 파일명과 내용은 유지했습니다.
 
 ### 이론 자료
 
 | 순서 | 자료 |
 | --- | --- |
-| 0장 | [RTOS 기본 개념](docs/lectures/theory/0장.%20RTOS%20기본%20개념.pdf) |
-| 1장 | [1장 강의자료](docs/lectures/theory/1장.pdf) |
-| 2장 | [2장 강의자료](docs/lectures/theory/2장.pdf) |
+| 0장 | [RTOS 기본 개념](docs/lectures/0장.%20RTOS%20기본%20개념.pdf) |
+| 1장 | [1장 강의자료](docs/lectures/1장.pdf) |
+| 2장 | [2장 강의자료](docs/lectures/2장.pdf) |
 
 ### 실습 자료
 
 | 순서 | 자료 | 관련 코드 |
 | --- | --- | --- |
-| 1 | [LCD Demo](docs/lectures/practice/1.%20LCD%20Demo.pdf) | [LCD_DEMO](LCD_DEMO/) |
-| 2 | [LED Demo](docs/lectures/practice/2.%20LED%20Demo.pdf) | 기본 LED 실습 자료 |
-| 3 | [RTOS_LED Demo](docs/lectures/practice/3.%20RTOS_LED%20Demo.pdf) | [LED_DEMO](LED_DEMO/) |
-| 4 | [RTOS_LCD Demo](docs/lectures/practice/4.%20RTOS_LCD%20Demo.pdf) | [RTOS_LCD_DEMO](RTOS_LCD_DEMO/) |
-| 5 | [RTOS_LCD_LED 제어 실습](docs/lectures/practice/5.%20RTOS_LCD_LED%20제어%20실습.pdf) | [RTOS_LCD_LED_CTRL](RTOS_LCD_LED_CTRL/) |
+| 1 | [LCD Demo](docs/lectures/1.%20LCD%20Demo.pdf) | [LCD_DEMO](LCD_DEMO/) |
+| 2 | [LED Demo](docs/lectures/2.%20LED%20Demo.pdf) | 기본 LED 실습 자료 |
+| 3 | [RTOS_LED Demo](docs/lectures/3.%20RTOS_LED%20Demo.pdf) | [LED_DEMO](LED_DEMO/) |
+| 4 | [RTOS_LCD Demo](docs/lectures/4.%20RTOS_LCD%20Demo.pdf) | [RTOS_LCD_DEMO](RTOS_LCD_DEMO/) |
+| 5 | [RTOS_LCD_LED 제어 실습](docs/lectures/5.%20RTOS_LCD_LED%20제어%20실습.pdf) | [RTOS_LCD_LED_CTRL](RTOS_LCD_LED_CTRL/) |
 
 README는 현재 구현을 설명하므로 강의자료의 예제와 차이가 있을 수 있습니다. 강의자료의 저작권은 원저작자에게 있으며, FreeRTOS와 포함된 외부 라이브러리의 라이선스 및 저작권 고지는 각 소스와 라이선스 파일을 따릅니다.
