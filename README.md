@@ -13,6 +13,8 @@ ATmega128과 FreeRTOS로 LED·LCD 제어, 태스크 스케줄링, 생산자·소
 | [RTOS_LCD_LED_CTRL](RTOS_LCD_LED_CTRL/) | LED·LCD 태스크 동시 실행 | LED 점멸과 LCD 출력 |
 | [RTOS_ISR_PROSUMER](RTOS_ISR_PROSUMER/README.md) | 임계 구역을 이용한 공유 버퍼 보호 | 생산자·소비자 각각 5개, 버퍼 개수를 LED·LCD로 표시 |
 | [RTOS_ISR_QUEUE_DEMO](RTOS_ISR%20_QUEUE_DEMO/README.md) | FreeRTOS 큐와 ISR 세마포어 | 큐 개수를 LED·LCD로 표시하고 SW2 인터럽트로 큐 초기화 |
+| [GAME](GAME/) | 큐와 외부 인터럽트를 이용한 LCD 슈팅 게임 | SW2·SW3 이동, SW4 발사, SW6 재시작 |
+| [NEW_GAME](NEW_GAME/) | `GAME` 변형: 탄약·재장전·난이도 증가 | 점수에 따라 적 속도 증가, 탄약 자동 재장전 |
 
 `LED_DEMO`는 FreeRTOS를 사용하는 프로젝트입니다. `RTOS_LCD_LED_CTRL`의 내부 솔루션명은 기존 파일명인 `RTOS_LCD_LED_CRTL`을 유지합니다.
 
@@ -49,6 +51,8 @@ cd HINT-RTOS-ECU-Programming
 | RTOS LED·LCD | [RTOS_LCD_LED_CRTL.atsln](RTOS_LCD_LED_CTRL/RTOS_LCD_LED_CTRL/RTOS_LCD_LED_CRTL.atsln) |
 | 생산자·소비자 | [RTOS_ISR_PROSUMER.atsln](RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER.atsln) |
 | 큐·인터럽트 | [RTOS_ISR _QUEUE_DEMO.atsln](RTOS_ISR%20_QUEUE_DEMO/RTOS_ISR%20_QUEUE_DEMO/RTOS_ISR%20_QUEUE_DEMO.atsln) |
+| LCD 게임 | [GAME.atsln](GAME/GAME/GAME.atsln) |
+| LCD 게임 변형 | [NEW_GAME.atsln](NEW_GAME/NEW_GAME/NEW_GAME.atsln) |
 
 1. 대상 디바이스가 ATmega128인지 확인하고 Debug 구성으로 빌드합니다.
 2. 프로젝트의 `Debug` 폴더에 생성된 `.hex` 또는 `.elf`를 프로그래머로 보드에 기록합니다.
@@ -66,6 +70,9 @@ cd HINT-RTOS-ECU-Programming
 | LCD RW | PG1 |
 | LCD E | PG2 |
 | SW2 | PE4/INT4 |
+| SW3 | PE5/INT5 |
+| SW4 | PE6/INT6 |
+| SW6 | PE7/INT7 |
 
 LCD 전원·접지·명암·백라이트는 사용 중인 보드와 모듈의 핀 배치에 맞게 연결합니다. LED의 켜짐 논리는 보드 회로에 따라 다르며 ISR 실습은 Active Low를 기본으로 사용합니다.
 
@@ -91,6 +98,8 @@ LCD 전원·접지·명암·백라이트는 사용 중인 보드와 모듈의 �
 - 기존 LCD 실습의 `_delay_ms()`는 CPU를 사용하는 바쁜 대기입니다. 선점될 수는 있지만 태스크를 Blocked 상태로 만들지는 않습니다.
 - `RTOS_ISR_PROSUMER`는 짧은 임계 구역에서 공유 버퍼를 갱신하며 LCD 출력과 대기는 임계 구역 밖에서 수행합니다.
 - `RTOS_ISR_QUEUE_DEMO`는 FreeRTOS 큐로 생산자·소비자를 연결하고, INT4 ISR에서는 이진 세마포어만 깨워 큐 초기화를 태스크 문맥에서 수행합니다.
+- `GAME`은 INT4~INT7 버튼 ISR에서 명령을 큐로 보내고, 게임 태스크가 플레이어 이동·발사·재시작을 처리합니다.
+- `NEW_GAME`은 `GAME`을 변형해 탄약 3발, 자동 재장전, 점수 기반 적 속도 증가 규칙을 추가했습니다.
 
 힙과 스택 설정은 프로젝트마다 다릅니다. LED·LCD 통합 실습의 힙은 1,500바이트, 공유 버퍼 ISR 실습의 힙은 2,800바이트, 큐 ISR 실습의 힙은 3,000바이트입니다.
 
