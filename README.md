@@ -122,7 +122,10 @@ LCD 전원·접지·명암·백라이트는 사용 중인 보드와 모듈의 �
 ## 라이선스
 
 FreeRTOS와 포함된 외부 라이브러리의 라이선스 및 저작권 고지는 각 소스와 라이선스 파일을 따릅니다.
-\n---\n\n## English
+
+---
+
+## English
 
 ### Hyundai Motor Group HINT Cohort 1: RTOS-Based ECU Programming Exercises
 
