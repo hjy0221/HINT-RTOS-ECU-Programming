@@ -5,55 +5,243 @@
 
 ## 日本語
 
-Hyundai Motor Group HINT 第1期の、リアルタイム OS ベース ECU プログラミング実習リポジトリです。ATmega128 と FreeRTOS を使い、LED・LCD 制御、タスクスケジューリング、producer-consumer 同期を学びます。文書は現在のコードを基にしており、講義資料の原本は含みません。
+ATmega128とFreeRTOSでLED・LCD制御、タスクスケジューリング、生産者・消費者同期を学習する実習リポジトリです。文書は現在のコードに基づいて書かれており、講義資料のソースは含まれていません。
 
-### 実習内容
+## 練習リスト
 
-LCD の基本制御、FreeRTOS タスクによる LED・LCD、共有バッファ、キューと ISR セマフォ、LCD シューティングゲーム、弾薬・難易度を追加したゲーム変形を収録しています。各プロジェクトの内容、実行結果、ソリューションの場所は韓国語セクションの表にあります。
+|プロジェクト|学習内容実行結果|
+| --- | --- | --- |
+| [LCD_DEMO]（LCD_DEMO /）| RTOSなしのLCD制御|文字列の表示と消去の繰り返し
+| [LED_DEMO]（LED_DEMO /）| FreeRTOSタスクの作成と遅延500msごとのLED状態反転|
+| [RTOS_LCD_DEMO]（RTOS_LCD_DEMO /）| LCD出力タスク| 2行の文字列を表示して消去を繰り返します。
+| [RTOS_LCD_LED_CTRL]（RTOS_LCD_LED_CTRL /）| LED・LCDタスク同時実行LED点滅とL​​CD出力|
+| [RTOS_ISR_PROSUMER]（RTOS_ISR_PROSUMER / README.md）|臨界ゾーンを使用した共有バッファ保護生産者・消費者それぞれ5個、バッファ数をLED・LCDで表示
+| [RTOS_ISR_QUEUE_DEMO]（RTOS_ISR％20_QUEUE_DEMO / README.md）| FreeRTOSキューとISRセマフォ|キュー数をLED・LCDで表示し、SW2割り込みでキュー初期化
+| [GAME](GAME/) |キューと外部割り込みによるLCDシューティングゲーム| SW2・SW3移動、SW4発射、SW6再起動
+| [NEW_GAME]（NEW_GAME /）| `GAME`変形：弾薬・再装填・難易度増加スコアに応じて敵の速度が増加、弾薬の自動リロード
 
-### 開発環境と開始
+`LED_DEMO`はFreeRTOSを使用するプロジェクトです。 `RTOS_LCD_LED_CTRL`の内部ソリューション名は、既存のファイル名である`RTOS_LCD_LED_CRTL`を保持します。
 
-ATmega128、14.7456 MHz、Atmel Studio 7 / Microchip Studio、AVR-GCC、ATmega_DFP 1.7.374、LED と文字 LCD を対象にしています。ボードのクロックとプロジェクト設定を合わせてください。リポジトリをクローンし、目的の `.atsln` を IDE で開いてビルド・書き込みます。配線、操作、注意事項は韓国語セクションにあります。
+他に、[RTOS_LED_DEMO](RTOS_LED_DEMO/) は独立したソリューションなしで関連ソースを保持し、[FreeRTOS-LTS](FreeRTOS-LTS/) はカーネルと関連ライブラリソースを含んでいます。
+
+## 開発環境
+
+|アイテム|設定|
+| --- | --- |
+| MCU | ATmega128 |
+| CPUクロック| 14.7456 MHz（`F_CPU=14745600UL`）|
+| IDE | Atmel Studio 7 / Microchip Studio |
+|コンパイラ| AVR-GCC |
+|デバイスパックATmega_DFP 1.7.374 |
+|プロジェクトフォーマット| `.atsln`ソリューション、`.cproj`プロジェクト|
+|周辺機器LED、文字LCD |
+
+実際のボードクロックとプロジェクト設定が一致する必要があります。他の開発環境では、インストールされているデバイスパックとツールパスを確認してください。
+
+## はじめに
+
+```powershell
+git clone https://github.com/hjy0221/HINT-RTOS-ECU-Programming.git
+cd HINT-RTOS-ECU-Programming
+```
+
+目的のソリューションをIDEで開きます。以下のパスはストレージルートベースです。
+
+|練習ソリューションパス|
+| --- | --- |
+|基本LCD | [LCD_DEMO.atsln]（LCD_DEMO/LCD_DEMO/LCD_DEMO.atsln）|
+| RTOS LED | [LED_DEMO.atsln]（LED_DEMO/LED_DEMO/LED_DEMO.atsln）|
+| RTOS LCD | [RTOS_LCD_DEMO.atsln]（RTOS_LCD_DEMO/RTOS_LCD_DEMO/RTOS_LCD_DEMO.atsln）|
+| RTOS LED・LCD | [RTOS_LCD_LED_CRTL.atsln]（RTOS_LCD_LED_CTRL / RTOS_LCD_LED_CTRL / RTOS_LCD_LED_CRTL.atsln）|
+|生産者・消費者[RTOS_ISR_PROSUMER.atsln]（RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER.atsln）|
+|キュー・割り込み[RTOS_ISR _QUEUE_DEMO.atsln]（RTOS_ISR％20_QUEUE_DEMO / RTOS_ISR％20_QUEUE_DEMO / RTOS_ISR％20_QUEUE_DEMO.atsln）|
+| LCDゲーム| [GAME.atsln](GAME/GAME/GAME.atsln) |
+| LCDゲームバリエーション[NEW_GAME.atsln]（NEW_GAME/NEW_GAME/NEW_GAME.atsln）|
+
+1. ターゲットデバイスがATmega128であることを確認し、Debug設定でビルドします。
+2.プロジェクトの`Debug`フォルダに作成された`.hex`または`.elf`をプログラマとしてボードに書き込みます。
+3. 実習リストの実行結果を確認します。 ISR実習の詳細な動作と設定については、[共有バッファの実習]（RTOS_ISR_PROSUMER/README.md）と[キューの実習]（RTOS_ISR%20_QUEUE_DEMO/README.md）を参照してください。プロジェクトと`Source`フォルダの相対位置を維持する必要があり、ヘッダーとカーネルソースを見つけることができます。新しいビルド出力とIDEキャッシュは`.gitignore`として除外されます。
+
+## ハードウェア接続
+
+|機能ATmega128ポート|
+| --- | --- |
+| LED | PB0〜PB7 |
+| LCDデータD0〜D7 | PA0〜PA7 |
+| LCD RS | PG0 |
+| LCD RW | PG1 |
+| LCD E | PG2 |
+| SW2 | PE4 / INT4 |
+| SW3 | PE5 / INT5 |
+| SW4 | PE6 / INT6 |
+| SW6 | PE7 / INT7 |
+
+LCD電源・接地・コントラスト・バックライトは、使用中のボードとモジュールのピン配置に合わせて接続します。 LEDの点灯ロジックはボード回路によって異なり、ISRの実践はActive Lowをベースにしています。
+
+## コードを読む
+
+|ファイル・フォルダ|役割|
+| --- | --- |
+|各プロジェクトの`main.c` |周辺機器の初期化、タスク生成、実践動作
+| `Source/include/FreeRTOSConfig.h` |ティックサイクル、ヒープ、スケジューリングなどのカーネル設定|
+| `Source/include/FreeRTOS.h`、`task.h` | FreeRTOSとタスクAPI宣言|
+| `Source/portable/GCC/ATMega323` | AVR-GCCのコンテキスト切り替えとハードウェア依存処理
+| `Source/tasks.c`、`list.c`、`queue.c` |カーネルの実装
+| `Source/heap_1.c` |メモリ割り当ての実装、解放はサポートされていません。
+| `Source/lcd.c`、`Source/include/lcd.h` | LCDドライバ|
+
+上記の配置はRTOS LCD・統合・ISRプロジェクト基準です。 `LED_DEMO`はカーネルが`LED_DEMO/LED_DEMO/Source`にあり、`FreeRTOSConfig.h`は`main.c`の隣にあります。デフォルトのLCDプロジェクトはRTOSカーネルを使用しません。
+
+ヘッダーはコンパイラのインクルード検索パスとして参照されるため、`main.c`と同じフォルダに配置する必要はありません。実装ファイルは`.cproj`のコンパイル項目にも登録する必要があります。
+
+### 待機と共有データ
+
+- LED タスクの `vTaskDelay()` はタスクを Blocked 状態に切り替えます。
+- 従来のLCD実習の`_delay_ms()`は、CPUを使用する忙しい待機です。プリエンプトは可能ですが、タスクをブロック状態にすることはありません。
+- `RTOS_ISR_PROSUMER`は短いしきい値ゾーンで共有バッファを更新し、LCD出力と待機はしきい値ゾーンの外で実行します。
+- `RTOS_ISR_QUEUE_DEMO`はFreeRTOSキューで生産者・消費者を連結し、INT4 ISRではバイナリセマフォだけが起きてキュー初期化をタスクコンテキストで行います。
+- `GAME`はINT4～INT7ボタンISRからコマンドをキューに送り、ゲームタスクがプレイヤーの移動・発射・再起動を処理します。
+- `NEW_GAME`は`GAME`を変形し、弾薬3発、自動再装填、スコアベースの速度増加ルールを追加しました。
+
+ヒープとスタックの設定はプロジェクトによって異なります。 LED・LCD統合実習のヒープは1,500バイト、共有バッファISR実習のヒープは2,800バイト、キューISR実習のヒープは3,000バイトです。
+
+## トラブルシューティング
+
+|症状確認する項目
+| --- | --- |
+| `FreeRTOS.h`または`task.h`が見つかりません。そのプロジェクトの`Source/include`検索パス|
+| `portmacro.h`が見つかりません。 `portable/GCC/ATMega323`検索パス|
+|タスク関数のundefined reference |カーネル・ポート・ヒープ実装ファイルのコンパイル登録
+| LCD関数の未定義参照| `lcd.c`を登録するかどうか|
+|デバイスパックパスエラー| ATmega_DFPインストールバージョンとプロジェクトリファレンス|
+|パス修正後の同じエラーClean後Rebuild |
+|タスクが実行されていません。タスク生成結果、ヒープ・スタック余裕、ボードクロック
+| LED・LCD出力異常配線、LED極性、LCDコントラスト設定|
+| SW2を押しても初期化されません。 PE4/INT4接続、内部プルアップ、EIMSK・EICRB設定ビルドの成功と実際のボード検証は別々です。 `RTOS_ISR_PROSUMER`はAVR-GCCビルドとボードの動作を確認しました。 `RTOS_ISR_QUEUE_DEMO`はAVR-GCCビルドとAVRISP mkII記録・Verifyを確認し、LCD・LED変化とSW2初期化の実際の観察はボードで別途確認する必要があります。
+
+## ライセンス
+
+FreeRTOSを含む外部ライブラリのライセンスと著作権通知は、各ソースとライセンスファイルに従います。
 
 ## English
 
-### Hyundai Motor Group HINT Cohort 1: RTOS-Based ECU Programming Exercises
+This is a practice repository for learning LED/LCD control, task scheduling, and producer/consumer synchronization with ATmega128 and FreeRTOS. The document was written based on the current code and does not include the original lecture materials.
 
-This repository uses ATmega128 and FreeRTOS to teach LED/LCD control, task scheduling, and producer–consumer synchronization. The documentation describes the current code; original lecture materials are not included.
+## Lab List
 
-### Exercises
+| project | What you learn | execution result |
+| --- | --- | --- |
+| [LCD_DEMO](LCD_DEMO/) | LCD control without RTOS | Repeat display and erase of string |
+| [LED_DEMO](LED_DEMO/) | FreeRTOS task creation and delay | LED state inversion every 500 ms |
+| [RTOS_LCD_DEMO](RTOS_LCD_DEMO/) | LCD output task | Repeat display and erase of two-line string |
+| [RTOS_LCD_LED_CTRL](RTOS_LCD_LED_CTRL/) | Simultaneous execution of LED·LCD tasks | LED blinking and LCD output |
+| [RTOS_ISR_PROSUMER](RTOS_ISR_PROSUMER/README.md) | Shared buffer protection using critical sections | 5 each for producer and consumer, number of buffers displayed on LED and LCD |
+| [RTOS_ISR_QUEUE_DEMO](RTOS_ISR%20_QUEUE_DEMO/README.md) | FreeRTOS queues and ISR semaphores | Displays the number of queues on LED/LCD and initializes the queue with SW2 interrupt |
+| [GAME](GAME/) | LCD shooting game using queues and external interrupts | Move SW2·SW3, fire SW4, restart SW6 |
+| [NEW_GAME](NEW_GAME/) | `GAME` Variants: Increased ammo, reload, and difficulty | Enemy speed increases based on score, ammo reloads automatically |
 
-- `LCD_DEMO`: LCD control without an RTOS; repeatedly displays and clears text.
-- `LED_DEMO`: FreeRTOS task creation and delay; toggles LEDs every 500 ms.
-- `RTOS_LCD_DEMO`: LCD output task; repeatedly displays and clears two lines.
-- `RTOS_LCD_LED_CTRL`: concurrent LED blinking and LCD output; its internal solution retains the filename `RTOS_LCD_LED_CRTL`.
-- [`RTOS_ISR_PROSUMER`](RTOS_ISR_PROSUMER/README.md): critical-section protection for a shared buffer, with five producers and five consumers and buffer count shown on LEDs/LCD.
-- [`RTOS_ISR_QUEUE_DEMO`](RTOS_ISR%20_QUEUE_DEMO/README.md): FreeRTOS queue and ISR semaphore, displaying queue count and resetting the queue on SW2.
-- `GAME`: LCD shooting game using a queue and external interrupts (SW2/SW3 move, SW4 fires, SW6 restarts). `NEW_GAME` adds three rounds, automatic reload, and increasing enemy speed based on score.
+`LED_DEMO` is a project that uses FreeRTOS. The internal solution name of `RTOS_LCD_LED_CTRL` maintains the existing file name `RTOS_LCD_LED_CRTL`.
 
-`RTOS_LED_DEMO` stores related source without a standalone solution; `FreeRTOS-LTS` contains the kernel and related library sources.
+In addition, [RTOS_LED_DEMO](RTOS_LED_DEMO/) stores related sources without independent solutions, and [FreeRTOS-LTS](FreeRTOS-LTS/) contains the original kernel and related libraries.
 
-### Environment and setup
+## Development environment
 
-Use ATmega128 at 14.7456 MHz (`F_CPU=14745600UL`), Atmel Studio 7 or Microchip Studio, AVR-GCC, ATmega_DFP 1.7.374, `.atsln`/`.cproj` files, LEDs, and a character LCD. Ensure the physical board clock matches the project; check installed device packs and tool paths in other environments.
+| Item | Settings |
+| --- | --- |
+| MCU | ATmega128 |
+| CPU clock | 14.7456 MHz (`F_CPU=14745600UL`) |
+| IDE | Atmel Studio 7 / Microchip Studio |
+| compiler | AVR-GCC |
+| Device Pack | ATmega_DFP 1.7.374 |
+| Project Format | `.atsln` solution, `.cproj` project |
+| Peripherals | LED, character LCD |
 
-Clone the repository and open the desired solution in the IDE using the links in the Korean table above. Confirm the target device, build Debug, flash the generated `.hex` or `.elf` from the project's `Debug` folder, and check the behavior described above. Consult the linked ISR exercise READMEs for details. Preserve the relative locations of each project and `Source` so headers and kernel files can be found. Build artifacts and IDE caches are ignored.
+Your actual board clock and project settings must match. In other development environments, check the installed device packs and toolpaths.
 
-### Hardware
+## Getting started
 
-LEDs use PB0–PB7; LCD D0–D7 use PA0–PA7, RS uses PG0, RW PG1, and E PG2. SW2–SW4 use PE4/INT4 through PE6/INT6; SW6 uses PE7/INT7. Connect LCD power, ground, contrast, and backlight according to the board and module. LED polarity depends on the circuit; ISR exercises default to active-low.
+```powershell
+git clone https://github.com/hjy0221/HINT-RTOS-ECU-Programming.git
+cd HINT-RTOS-ECU-Programming
+```
 
-### Code and synchronization
+Open the desired solution in the IDE. The path below is based on the storage root.
 
-Each `main.c` initializes peripherals, creates tasks, and implements the exercise. `Source/include/FreeRTOSConfig.h` configures the kernel; `FreeRTOS.h` and `task.h` declare APIs. `Source/portable/GCC/ATMega323` provides AVR-GCC context switching; `tasks.c`, `list.c`, and `queue.c` implement the kernel; `heap_1.c` allocates memory without freeing; and `lcd.c`/`lcd.h` implement the LCD driver. `LED_DEMO` keeps its kernel under `LED_DEMO/LED_DEMO/Source` and its config alongside `main.c`; the basic LCD project does not use FreeRTOS. Headers require include paths, and implementation files must also be registered in the `.cproj`.
+| Practice | Solution Path |
+| --- | --- |
+| Basic LCD | [LCD_DEMO.atsln](LCD_DEMO/LCD_DEMO/LCD_DEMO.atsln) |
+| RTOS LED | [LED_DEMO.atsln](LED_DEMO/LED_DEMO/LED_DEMO.atsln) |
+| RTOS LCD | [RTOS_LCD_DEMO.atsln](RTOS_LCD_DEMO/RTOS_LCD_DEMO/RTOS_LCD_DEMO.atsln) |
+| RTOS LED·LCD | [RTOS_LCD_LED_CRTL.atsln](RTOS_LCD_LED_CTRL/RTOS_LCD_LED_CTRL/RTOS_LCD_LED_CRTL.atsln) |
+| Producer/Consumer | [RTOS_ISR_PROSUMER.atsln](RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER/RTOS_ISR_PROSUMER.atsln) |
+| Queue/Interrupt | [RTOS_ISR _QUEUE_DEMO.atsln](RTOS_ISR%20_QUEUE_DEMO/RTOS_ISR%20_QUEUE_DEMO/RTOS_ISR%20_QUEUE_DEMO.atsln) |
+| LCD gaming | [GAME.atsln](GAME/GAME/GAME.atsln) |
+| LCD gaming variant | [NEW_GAME.atsln](NEW_GAME/NEW_GAME/NEW_GAME.atsln) |
 
-`vTaskDelay()` blocks a task; `_delay_ms()` busy-waits, although it can be preempted. The shared-buffer exercise updates the buffer in short critical sections and performs LCD output and waits outside them. The queue exercise uses a FreeRTOS queue, and INT4 signals a binary semaphore so reset occurs in task context. In `GAME`, INT4–INT7 button ISRs enqueue commands processed by the game task. Heap sizes vary: 1,500 bytes for integrated LED/LCD, 2,800 for shared-buffer ISR, and 3,000 for queue ISR.
+1. Make sure the target device is ATmega128 and build with Debug configuration.
+2. Write `.hex` or `.elf` created in the `Debug` folder of the project to the board as a programmer.
+3. Check the execution results of the exercise list. For detailed operations and settings of the ISR lab, refer to [Shared Buffer Lab](RTOS_ISR_PROSUMER/README.md) and [Queue Lab](RTOS_ISR%20_QUEUE_DEMO/README.md).You need to keep the relative positions of your project and `Source` folders so that you can find the headers and kernel sources. Exclude new build artifacts and IDE caches with `.gitignore`.
 
-### Troubleshooting and validation
+## Hardware connection
 
-For missing `FreeRTOS.h`/`task.h` or `portmacro.h`, check the project include paths. For undefined task or LCD references, ensure kernel, port, heap, or `lcd.c` sources are included in the build. Check the ATmega_DFP version and references for device-pack errors and clean/rebuild after path changes. For tasks that do not run, check task creation, heap/stack headroom, and board clock; for incorrect output, check wiring, LED polarity, and LCD contrast. If SW2 does not reset the queue, check PE4/INT4, the internal pull-up, and EIMSK/EICRB settings.
+| Features | ATmega128 port |
+| --- | --- |
+| LED | PB0~PB7 |
+| LCD data D0~D7 | PA0~PA7 |
+| LCD RS | PG0 |
+| LCD RW | PG1 |
+| LCD E | PG2 |
+| SW2 | PE4/INT4 |
+| SW3 | PE5/INT5 |
+| SW4 | PE6/INT6 |
+| SW6 | PE7/INT7 |
 
-A successful build is distinct from board verification. `RTOS_ISR_PROSUMER` was built with AVR-GCC and verified on the board. `RTOS_ISR_QUEUE_DEMO` was built and programmed/verified with AVRISP mkII; physical LCD/LED behavior and SW2 reset still require separate board observation. FreeRTOS and included third-party libraries follow their own copyright and license notices.
+Connect the LCD power, ground, contrast, and backlight according to the pin layout of the board and module in use. The turn-on logic of the LED depends on the board circuitry, and the ISR lab uses Active Low as the default.
+
+## Read code
+
+| File·Folder | Role |
+| --- | --- |
+| `main.c` for each project | Peripheral device initialization, task creation, practice operation |
+| `Source/include/FreeRTOSConfig.h` | Kernel settings such as tick cycle, heap, scheduling, etc. |
+| `Source/include/FreeRTOS.h`, `task.h` | FreeRTOS and Task API Declaration |
+| `Source/portable/GCC/ATMega323` | Context switching and hardware-dependent processing for AVR-GCC |
+| `Source/tasks.c`, `list.c`, `queue.c` | Kernel Implementation |
+| `Source/heap_1.c` | Implementation of memory allocation, freeing is not supported |
+| `Source/lcd.c`, `Source/include/lcd.h` | LCD Driver |
+
+The above arrangement is based on the RTOS LCD/integration/ISR project. `LED_DEMO` has its kernel next to `LED_DEMO/LED_DEMO/Source`, and `FreeRTOSConfig.h` has its kernel next to `main.c`. The default LCD project does not use the RTOS kernel.
+
+The header is referenced by the compiler's include search path, so it doesn't have to be in the same folder as `main.c`. The implementation file must also be registered in the compilation entry of `.cproj`.
+
+### Waiting and shared data
+
+- `vTaskDelay()` of the LED task switches the task to Blocked state.
+- `_delay_ms()` in the existing LCD practice is a busy standby using the CPU. It may be preempted, but it does not put the task in Blocked state.
+- `RTOS_ISR_PROSUMER` updates the shared buffer in a short critical section, with LCD output and waiting outside the critical section.
+- `RTOS_ISR_QUEUE_DEMO` connects producers and consumers with FreeRTOS queues, and in INT4 ISR, only binary semaphores are awakened and queue initialization is performed in the task context.
+- `GAME` queues commands from INT4~INT7 button ISRs, and game tasks handle player movement, firing, and restarting.
+- `NEW_GAME` modifies `GAME`, adding 3 rounds of ammo, automatic reload, and score-based enemy speed increase rules.
+
+Heap and stack settings vary from project to project. The heap for the LED·LCD integration lab is 1,500 bytes, the heap for the shared buffer ISR lab is 2,800 bytes, and the heap for the queue ISR lab is 3,000 bytes.
+
+## Troubleshooting
+
+| Symptoms | Items to check |
+| --- | --- |
+| Didn't find `FreeRTOS.h` or `task.h` | `Source/include` search path for that project |
+| `portmacro.h` not found | `portable/GCC/ATMega323` Search Path |
+| undefined reference in task function | Compilation registration of kernel, port, and heap implementation files |
+| undefined reference in LCD function | `lcd.c` registration status |
+| device pack path error | ATmega_DFP installation version and project reference |
+| Same error after modifying the path | Clean and Rebuild |
+| Task does not run | Task creation result, heap/stack free space, board clock |
+| LED·LCD output error | Wiring, LED polarity, LCD contrast settings |
+| Does not reset when pressing SW2 | PE4/INT4 connection, internal pull-up, EIMSK·EICRB settings |Build success is separate from actual board verification. `RTOS_ISR_PROSUMER` verified AVR-GCC build and board operation. `RTOS_ISR_QUEUE_DEMO` has confirmed the AVR-GCC build and AVRISP mkII record/Verify, and actual observation of LCD/LED changes and SW2 initialization must be confirmed separately on the board.
+
+## License
+
+The license and copyright notices for FreeRTOS and included external libraries follow their respective source and license files.
 
 ## 한국어
 
