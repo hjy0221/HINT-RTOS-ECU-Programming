@@ -5,6 +5,8 @@
 
 ## 日本語
 
+[日本語](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%E6%97%A5%E6%9C%AC%E8%AA%9E) · [English](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#english) · [한국어](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%ED%95%9C%EA%B5%AD%EC%96%B4)
+
 ATmega128とFreeRTOSでLED・LCD制御、タスクスケジューリング、生産者・消費者同期を学習する実習リポジトリです。文書は現在のコードに基づいて書かれており、講義資料のソースは含まれていません。
 
 ## 練習リスト
@@ -125,6 +127,8 @@ FreeRTOSを含む外部ライブラリのライセンスと著作権通知は、
 
 ## English
 
+[日本語](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%E6%97%A5%E6%9C%AC%E8%AA%9E) · [English](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#english) · [한국어](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%ED%95%9C%EA%B5%AD%EC%96%B4)
+
 This is a practice repository for learning LED/LCD control, task scheduling, and producer/consumer synchronization with ATmega128 and FreeRTOS. The document was written based on the current code and does not include the original lecture materials.
 
 ## Lab List
@@ -244,6 +248,8 @@ Heap and stack settings vary from project to project. The heap for the LED·LCD 
 The license and copyright notices for FreeRTOS and included external libraries follow their respective source and license files.
 
 ## 한국어
+
+[日本語](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%E6%97%A5%E6%9C%AC%E8%AA%9E) · [English](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#english) · [한국어](https://github.com/hjy0221/HINT-RTOS-ECU-Programming#%ED%95%9C%EA%B5%AD%EC%96%B4)
 
 ATmega128과 FreeRTOS로 LED·LCD 제어, 태스크 스케줄링, 생산자·소비자 동기화를 학습하는 실습 저장소입니다. 문서는 현재 코드를 기준으로 작성했으며 강의자료 원본은 포함하지 않습니다.
 
